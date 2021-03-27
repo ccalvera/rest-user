@@ -5,9 +5,14 @@
  */
 package co.edu.utp.isc.gia.restuser.service;
 
+import co.edu.utp.isc.gia.restuser.data.entitiy.User;
+import co.edu.utp.isc.gia.restuser.data.repository.UserRepository;
+import co.edu.utp.isc.gia.restuser.exception.UserNotFoundException;
 import co.edu.utp.isc.gia.restuser.web.dto.UserDto;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,52 +22,58 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private List<UserDto> users = new ArrayList<>();
+    //private List<UserDto> users = new ArrayList<>();      //List para uso de datos locales
+    private UserRepository userRepository;
+    private ModelMapper modelMapper = new ModelMapper();
 
-    public UserDto save(UserDto user) {
-        if (users.isEmpty()) {
-            user.setId(users.size() + 1L);
-            user.setUsername(user.getUsername().toLowerCase());
-            users.add(user);
-        } else {
-            user.setId(users.get(users.size() - 1).getId() + 1);
-            user.setUsername(user.getUsername().toLowerCase());
-            users.add(user);
-        }
-        return user;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public UserDto update(Long id, UserDto user) {
-        for (UserDto userdto : users) {
-            if (userdto.getId().equals(id)) {
-                user.setId(id);
-                users.set(users.indexOf(userdto), user);
-                return user;
-            }
-        }
-        throw null;
+    public UserDto save(UserDto user) {
+        User myUser = modelMapper.map(user, User.class);
+        myUser = userRepository.save(myUser);
+        UserDto resp = modelMapper.map(myUser, UserDto.class);
+        return resp;
     }
 
     public UserDto remove(Long id) {
-        for (UserDto userdto : users) {
-            if (userdto.getId().equals(id)) {
-                return users.remove(users.indexOf(userdto));
-            }
+        if (userRepository.existsById(id)) {
+            UserDto deleted = findOne(id);
+            userRepository.deleteById(id);
+            return deleted;
         }
-        throw null;
+        throw new UserNotFoundException("User Not Found");
+    }
+
+    public UserDto update(Long id, UserDto user) {
+        if (userRepository.existsById(id)) {
+            user.setId(id);
+            UserDto updated = save(user);
+            return updated;
+        }
+        throw new UserNotFoundException("User Not Found");
     }
 
     public List<UserDto> listAll() {
-        return users;
+        List<UserDto> usersDto = null;
+        List<User> users = (List<User>) userRepository.findAll();
+        if (users != null && !users.isEmpty()) {
+            usersDto = new ArrayList<>();
+            for (User user : users) {
+                usersDto.add(modelMapper.map(user, UserDto.class));
+            }
+        }
+        return usersDto;
     }
 
     public UserDto findOne(Long id) {
-        for (UserDto userdto : users) {
-            if (userdto.getId().equals(id)) {
-                return userdto;
-            }
+        if (userRepository.existsById(id)) {
+            return modelMapper.map(userRepository.findById(id).get(), UserDto.class);
+        } else {
+            throw new UserNotFoundException("Not Found");
         }
-        //Aqui debe ir el throw new exception
-        throw null;
     }
+
 }

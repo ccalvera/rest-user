@@ -47,14 +47,15 @@ public class UserController {
         return userService.findOne(id);
     }
 
+    
     @PutMapping("/{id}")
     public UserDto updateOne(@PathVariable("id") Long id, @RequestBody UserDto user) {
-        return userService.update(id,user);
+        return userService.update(id, user);
     }
-
+    
+    
     @DeleteMapping("/{id}")
     public UserDto removeOne(@PathVariable("id") Long id) {
         return userService.remove(id);
     }
-
 }
