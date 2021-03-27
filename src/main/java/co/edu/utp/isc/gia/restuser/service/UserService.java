@@ -5,6 +5,8 @@
  */
 package co.edu.utp.isc.gia.restuser.service;
 
+
+import co.edu.utp.isc.gia.restuser.config.UserNotFoundException;
 import co.edu.utp.isc.gia.restuser.web.dto.UserDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +64,6 @@ public class UserService {
                 return userdto;
             }
         }
-        //Aqui debe ir el throw new exception
-        throw null;
+        throw new UserNotFoundException("Not Found");
     }
 }
