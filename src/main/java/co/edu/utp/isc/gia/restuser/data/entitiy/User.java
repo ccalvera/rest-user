@@ -6,6 +6,7 @@
 package co.edu.utp.isc.gia.restuser.data.entitiy;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,7 +23,8 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter @Getter
+@Setter
+@Getter
 @Entity
 @Table(name = "Usuario")
 public class User implements Serializable {
@@ -30,7 +32,9 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String username;
+    @Column(nullable = false)
     private String password;
     private String name;
     private String email;

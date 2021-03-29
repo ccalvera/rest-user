@@ -5,6 +5,8 @@
  */
 package co.edu.utp.isc.gia.restuser.web.controller;
 
+import co.edu.utp.isc.gia.restuser.exception.BadRequestException;
+import co.edu.utp.isc.gia.restuser.exception.InvalidUserException;
 import co.edu.utp.isc.gia.restuser.service.UserService;
 import co.edu.utp.isc.gia.restuser.web.dto.UserDto;
 import java.util.ArrayList;
@@ -34,7 +36,15 @@ public class UserController {
 
     @PostMapping()
     public UserDto save(@RequestBody UserDto user) {
-        return userService.save(user);
+        if (user == null) {
+            throw new BadRequestException("Parametro no valido");
+        } else if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            throw new InvalidUserException("username no puede ser vacio");
+        } else if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new InvalidUserException("password no puede ser vacio");
+        } else {
+            return userService.save(user);
+        }
     }
 
     @GetMapping()
@@ -47,13 +57,19 @@ public class UserController {
         return userService.findOne(id);
     }
 
-    
     @PutMapping("/{id}")
     public UserDto updateOne(@PathVariable("id") Long id, @RequestBody UserDto user) {
-        return userService.update(id, user);
+        if (user == null) {
+            throw new BadRequestException("Parametro no valido");
+        } else if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            throw new InvalidUserException("username no puede ser vacio");
+        } else if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new InvalidUserException("password no puede ser vacio");
+        } else {
+            return userService.update(id, user);
+        }
     }
-    
-    
+
     @DeleteMapping("/{id}")
     public UserDto removeOne(@PathVariable("id") Long id) {
         return userService.remove(id);

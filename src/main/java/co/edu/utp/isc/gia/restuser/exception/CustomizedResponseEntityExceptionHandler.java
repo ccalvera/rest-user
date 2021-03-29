@@ -26,5 +26,19 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
                 request.getDescription(false), HttpStatus.NOT_FOUND.getReasonPhrase());
         return new ResponseEntity<ExceptionConfig>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
+    
+    @ExceptionHandler(InvalidUserException.class)
+    public final ResponseEntity<ExceptionConfig> handleInvalidUserdException(InvalidUserException ex, WebRequest request) {
+        ExceptionConfig exceptionResponse = new ExceptionConfig(new Date(), ex.getMessage(),
+                request.getDescription(false), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        return new ResponseEntity<ExceptionConfig>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
+    @ExceptionHandler(BadRequestException.class)
+    public final ResponseEntity<ExceptionConfig> handleBadRequestException(BadRequestException ex, WebRequest request) {
+        ExceptionConfig exceptionResponse = new ExceptionConfig(new Date(), ex.getMessage(),
+                request.getDescription(false), HttpStatus.BAD_REQUEST.getReasonPhrase());
+        return new ResponseEntity<ExceptionConfig>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 
 }
